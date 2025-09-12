@@ -1,0 +1,5 @@
+com\wserp\commondto\AuthUserDto.class
+com\wserp\models\BaseEntity.class
+com\wserp\commondto\UserResponseDto$UserResponseDtoBuilder.class
+com\wserp\commondto\UserResponseDto.class
+com\wserp\commondto\AuthUserDto$AuthUserDtoBuilder.class
