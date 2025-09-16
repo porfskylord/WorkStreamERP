@@ -25,9 +25,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Optional<String> authenticate(LoginRequestDTO loginRequestDTO) {
-        return userServiceClient.getUserByEmail(loginRequestDTO.getEmail())
-                .filter(u -> passwordEncoder.matches(loginRequestDTO.getPassword(), u.getPassword()))
-                .map(u -> jwtUtils.generateToken(u.getEmail(), u.getRole()));
+
     }
 
     @Override

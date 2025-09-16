@@ -1,39 +1,34 @@
 package com.wserp.userservice.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.wserp.models.BaseEntity;
+import com.wserp.userservice.entity.enums.Active;
+import com.wserp.userservice.entity.enums.Role;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Data
-@Entity
+@Entity(name = "sec_users")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "sec_users")
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
 public class Users extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(nullable = false, unique = true)
+    private String username;
 
     @Column(nullable = false)
-    private String username;
+    private String password;
 
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
-    @ToString.Exclude
-    private String password;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id", nullable = false)
-    @JsonIgnoreProperties("users")
-    @ToString.Exclude
-    private Roles role;
+    @Enumerated(EnumType.STRING)
+    private Active active;
+
+    @Embedded
+    private UserDetails userDetails;
+
+
 }
