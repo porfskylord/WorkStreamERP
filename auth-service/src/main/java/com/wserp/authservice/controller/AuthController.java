@@ -1,46 +1,36 @@
 package com.wserp.authservice.controller;
 
-import com.wserp.authservice.dto.LoginRequestDTO;
-import com.wserp.authservice.dto.LoginResponseDTO;
-import com.wserp.authservice.service.intf.AuthService;
-import org.springframework.http.HttpStatus;
+import com.wserp.authservice.dto.TokenDto;
+import com.wserp.authservice.dto.request.LoginRequest;
+import com.wserp.authservice.dto.request.RegisterDto;
+import com.wserp.authservice.dto.request.RegisterRequest;
+import com.wserp.authservice.service.AuthService;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
+@Slf4j
 @RestController
+@RequestMapping("/auth")
+@RequiredArgsConstructor
+@Tag(name = "Authentication")
 public class AuthController {
-
     private final AuthService authService;
 
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
-
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequestDTO) {
-
-        Optional<String> tokenOptional = authService.authenticate(loginRequestDTO);
-
-        if (tokenOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        String token = tokenOptional.get();
-        return ResponseEntity.ok(new LoginResponseDTO(token));
-
+    public ResponseEntity<TokenDto> login(@RequestBody LoginRequest request){
+        log.info("Login request: {} {}", request.getUsername(), request.getPassword());
+        return ResponseEntity.ok(authService.login(request));
     }
 
-    @GetMapping("/validate")
-    public ResponseEntity<Void> validateToken(@RequestHeader("Authorization") String authHeader) {
-        if(authHeader == null || !authHeader.startsWith("Bearer ")){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        return authService.validateToken(authHeader.substring(7))
-                ? ResponseEntity.ok().build()
-                : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    @PostMapping("/register")
+    public ResponseEntity<RegisterDto> register(@RequestBody RegisterRequest request){
+        log.info("Register request: {} {}", request.getUsername(), request.getPassword());
+        return ResponseEntity.ok(authService.register(request));
     }
+
+
 
 }

@@ -1,0 +1,28 @@
+// Status: 404, time: 84ms, size: 110 B
+### Get Test
+GET http://localhost:8080/users/test HTTP/1.1
+cache-control: no-cache, no-store, max-age=0, must-revalidate
+content-type: application/problem+json
+date: Wed, 17 Sep 2025 14:38:07 GMT
+expires: 0
+pragma: no-cache
+referrer-policy: no-referrer
+transfer-encoding: chunked
+vary: Origin
+vary: Access-Control-Request-Method
+vary: Access-Control-Request-Headers
+vary: Origin
+vary: Access-Control-Request-Method
+vary: Access-Control-Request-Headers
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-xss-protection: 0
+
+{
+  "type": "about:blank",
+  "title": "Not Found",
+  "status": 404,
+  "detail": "No static resource test.",
+  "instance": "/test"
+}
+>> D:\JAVAPROGRAMMING\ALLProjects\WorkStreamERP\.idea\httpClient\09-17\Get Test\2025-09-17T200807.json

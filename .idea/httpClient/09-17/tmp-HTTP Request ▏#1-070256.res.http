@@ -1,0 +1,17 @@
+// Status: 401, time: 8ms, size: 0 B
+### HTTP Request ▏#1
+POST http://localhost:8080/auth/login HTTP/1.1
+cache-control: no-cache, no-store, max-age=0, must-revalidate
+content-length: 0
+expires: 0
+pragma: no-cache
+referrer-policy: no-referrer
+vary: Origin
+vary: Access-Control-Request-Method
+vary: Access-Control-Request-Headers
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-xss-protection: 0
+
+
+>> D:\JAVAPROGRAMMING\ALLProjects\WorkStreamERP\.idea\httpClient\09-17\HTTP Request ▏#1\2025-09-17T190256.txt

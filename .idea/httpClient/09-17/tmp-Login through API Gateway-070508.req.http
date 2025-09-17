@@ -1,0 +1,14 @@
+// Size: 53 B
+### Login through API Gateway
+POST http://localhost:8080/auth/login HTTP/1.1
+Accept: application/json
+Access-Control-Request-Headers: content-type
+Access-Control-Request-Method: POST
+Content-Type: application/json
+Origin: http://localhost:3000
+Content-Length: 53
+
+{
+  "username": "admin",
+  "password": "admin12345"
+}

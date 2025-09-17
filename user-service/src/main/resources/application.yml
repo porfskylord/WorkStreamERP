@@ -1,6 +1,6 @@
 spring:
   application:
-    name: user-service
+    name: USER-SERVICE
   datasource:
     url: jdbc:postgresql://localhost:5432/erp_user_db
     username: postgres
@@ -12,6 +12,8 @@ spring:
     properties:
       dialect: org.hibernate.dialect.PostgreSQLDialect
       format_sql: true
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
 
 server:
   port: 8082
@@ -22,5 +24,10 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
   instance:
     preferIpAddress: true
+
+
+jwt:
+  secret: sEwB7lNM2DQY/K3CUG3R3jQ+5tsezgzNOnSgkAHHPguh2VVn2Bfi4xaX0jXw1VIZ7jvOUMSoHeu+totSMOY7Ow==
+  expiration: 3600000
 
 

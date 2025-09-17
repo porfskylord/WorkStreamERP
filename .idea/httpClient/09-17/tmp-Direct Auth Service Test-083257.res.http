@@ -1,0 +1,17 @@
+// Status: 401, time: 183ms, size: 40 B
+### Direct Auth Service Test
+POST http://localhost:8081/auth/login HTTP/1.1
+cache-control: no-cache, no-store, max-age=0, must-revalidate
+content-type: application/json
+date: Wed, 17 Sep 2025 15:02:57 GMT
+expires: 0
+pragma: no-cache
+transfer-encoding: chunked
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-xss-protection: 0
+
+{
+  "error": "Invalid username or password"
+}
+>> D:\JAVAPROGRAMMING\ALLProjects\WorkStreamERP\.idea\httpClient\09-17\Direct Auth Service Test\2025-09-17T203257.json

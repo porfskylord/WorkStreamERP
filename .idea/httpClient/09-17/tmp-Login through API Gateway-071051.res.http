@@ -1,0 +1,21 @@
+// Status: 200, time: 280ms, size: 167 B
+### Login through API Gateway
+POST http://localhost:8080/auth/login HTTP/1.1
+cache-control: no-cache, no-store, max-age=0, must-revalidate
+content-type: application/json
+date: Wed, 17 Sep 2025 13:40:50 GMT
+expires: 0
+pragma: no-cache
+referrer-policy: no-referrer
+transfer-encoding: chunked
+vary: Origin
+vary: Access-Control-Request-Method
+vary: Access-Control-Request-Headers
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-xss-protection: 0
+
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlzcyI6IlJPTEVfVVNFUiIsImlhdCI6MTc1ODExNjQ1MCwiZXhwIjoxNzU4MTE2NDU0fQ.Wp85gc4r7ImdyqYIjh_b-B1ziJGn2RXCSiy6ckbRpy0"
+}
+>> D:\JAVAPROGRAMMING\ALLProjects\WorkStreamERP\.idea\httpClient\09-17\Login through API Gateway\2025-09-17T191051.json

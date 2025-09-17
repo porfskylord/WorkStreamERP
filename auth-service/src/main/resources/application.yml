@@ -3,11 +3,39 @@ server:
 
 eureka:
   client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+    service-url:
+      default-zone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
   instance:
-    preferIpAddress: true
+    prefer-ip-address: true
 
 spring:
   application:
-    name: auth-service
+    name: AUTH-SERVICE
+  security:
+    user:
+      password-ecoder: bcrypt
+
+# OpenAPI Configuration
+application-title: Auth Service API
+application-description: Authentication and Authorization Service for WorkStreamERP
+application-version: 1.0.0
+application-license: Apache 2.0
+
+jwt:
+  secret: sEwB7lNM2DQY/K3CUG3R3jQ+5tsezgzNOnSgkAHHPguh2VVn2Bfi4xaX0jXw1VIZ7jvOUMSoHeu+totSMOY7Ow==
+  expiration: 3600000  # 1 hour in milliseconds
+
+#feign:
+#  client:
+#    config:
+#      default:
+#        connect-timeout: 5000
+#        read-timeout: 5000
+#        logger-level: basic
+#  compression:
+#    request:
+#      enabled: true
+#    response:
+#      enabled: true

@@ -1,5 +1,6 @@
 package com.wserp.authservice.utils;
 
+import com.wserp.authservice.dto.UserDto;
 import com.wserp.commondto.AuthUserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -7,17 +8,18 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
-    private final AuthUserDto user;
+    private final UserDto user;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Stream.of(user.getRole())
-                .map(x -> new SimpleGrantedAuthority("ROLE_" + x))
-                .toList();  // Add .toList() to collect the stream
+                .map(x -> new SimpleGrantedAuthority("ROLE_" + x.name()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -27,7 +29,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getEmail();
+        return user.getUsername();
     }
 
     @Override

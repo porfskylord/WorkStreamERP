@@ -1,15 +1,21 @@
 package com.wserp.authservice.client;
 
-import com.wserp.commondto.AuthUserDto;
+import com.wserp.authservice.dto.UserDto;
+import com.wserp.authservice.dto.request.RegisterDto;
+import com.wserp.authservice.dto.request.RegisterRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.Optional;
-
-@FeignClient(name = "user-service", url = "http://localhost:8082/users")
+@FeignClient(name = "USER-SERVICE")
 public interface UserServiceClient {
-    @GetMapping("/userbyemail/{email}")
-    ResponseEntity<AuthUserDto> getUserByEmail(@PathVariable String email);
+
+    @PostMapping("/users/save")
+    ResponseEntity<RegisterDto> saveUser(@RequestBody RegisterRequest request);
+
+    @GetMapping("/users/getUserByUsername/{username}")
+    ResponseEntity<UserDto> getUserByUsername(@PathVariable String username);
 }

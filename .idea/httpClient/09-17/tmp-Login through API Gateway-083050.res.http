@@ -1,0 +1,21 @@
+// Status: 401, time: 309ms, size: 40 B
+### Login through API Gateway
+POST http://localhost:8080/auth/login HTTP/1.1
+cache-control: no-cache, no-store, max-age=0, must-revalidate
+content-type: application/json
+date: Wed, 17 Sep 2025 15:00:50 GMT
+expires: 0
+pragma: no-cache
+referrer-policy: no-referrer
+transfer-encoding: chunked
+vary: Origin
+vary: Access-Control-Request-Method
+vary: Access-Control-Request-Headers
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-xss-protection: 0
+
+{
+  "error": "Invalid username or password"
+}
+>> D:\JAVAPROGRAMMING\ALLProjects\WorkStreamERP\.idea\httpClient\09-17\Login through API Gateway\2025-09-17T203050.json

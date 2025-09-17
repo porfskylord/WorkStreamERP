@@ -1,40 +1,19 @@
 spring:
   application:
-    name: api-gateway
-  cloud:
-    gateway:
-      routes:
-        - id: auth-service
-          uri: lb://AUTH-SERVICE
-          predicates:
-            - Path=/auth/**
-          filters:
-            - StripPrefix=1
-
-        - id: user-service
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/api/users/**
-          filters:
-            - StripPrefix=1
-            - name: JwtValidation
-              args:
-                enabled: true
-
+    name: API-GATEWAY
 
 server:
   port: 8080
 
+# Eureka Client Configuration
 eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
-    registerWithEureka: true
-    fetchRegistry: true
+    register-with-eureka: true
+    fetch-registry: true
   instance:
-    preferIpAddress: true
+    prefer-ip-address: true
 
-auth:
-  service:
-    url: http://localhost:8081
-
+jwt:
+  secret: sEwB7lNM2DQY/K3CUG3R3jQ+5tsezgzNOnSgkAHHPguh2VVn2Bfi4xaX0jXw1VIZ7jvOUMSoHeu+totSMOY7Ow==

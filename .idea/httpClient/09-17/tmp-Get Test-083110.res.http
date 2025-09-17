@@ -1,0 +1,21 @@
+// Status: 403, time: 75ms, size: 0 B
+### Get Test
+GET http://localhost:8080/users/test HTTP/1.1
+cache-control: no-cache, no-store, max-age=0, must-revalidate
+content-length: 0
+date: Wed, 17 Sep 2025 15:01:10 GMT
+expires: 0
+pragma: no-cache
+referrer-policy: no-referrer
+vary: Origin
+vary: Access-Control-Request-Method
+vary: Access-Control-Request-Headers
+vary: Origin
+vary: Access-Control-Request-Method
+vary: Access-Control-Request-Headers
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-xss-protection: 0
+
+
+>> D:\JAVAPROGRAMMING\ALLProjects\WorkStreamERP\.idea\httpClient\09-17\Get Test\2025-09-17T203110.txt

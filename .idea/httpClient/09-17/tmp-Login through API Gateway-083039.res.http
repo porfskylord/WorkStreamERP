@@ -1,0 +1,24 @@
+// Status: 503, time: 135ms, size: 134 B
+### Login through API Gateway
+POST http://localhost:8080/auth/login HTTP/1.1
+cache-control: no-cache, no-store, max-age=0, must-revalidate
+content-length: 134
+content-type: application/json
+expires: 0
+pragma: no-cache
+referrer-policy: no-referrer
+vary: Origin
+vary: Access-Control-Request-Method
+vary: Access-Control-Request-Headers
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-xss-protection: 0
+
+{
+  "timestamp": "2025-09-17T15:00:39.099+00:00",
+  "path": "/auth/login",
+  "status": 503,
+  "error": "Service Unavailable",
+  "requestId": "79f194f0-1"
+}
+>> D:\JAVAPROGRAMMING\ALLProjects\WorkStreamERP\.idea\httpClient\09-17\Login through API Gateway\2025-09-17T203039.json

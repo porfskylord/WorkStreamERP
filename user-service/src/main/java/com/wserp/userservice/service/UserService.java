@@ -10,13 +10,16 @@ import com.wserp.userservice.exeption.ConfilictException;
 import com.wserp.userservice.exeption.NotFoundException;
 import com.wserp.userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
@@ -29,15 +32,14 @@ public class UserService {
             throw new ConfilictException("Username already exists");
         }
 
-        Users requestUser = Users.builder()
-                .username(request.getUsername())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .email(request.getEmail())
-                .role(Role.USER)
-                .active(Active.ACTIVE)
-                .build();
-
-        return userRepository.save(requestUser);
+        Users requestedUser = new Users();
+        requestedUser.setId(UUID.randomUUID().toString());
+        requestedUser.setUsername(request.getUsername());
+        requestedUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        requestedUser.setEmail(request.getEmail());
+        requestedUser.setRole(Role.USER);
+        requestedUser.setActive(Active.ACTIVE);
+        return userRepository.save(requestedUser);
     }
 
     public List<Users> getAll() {
@@ -49,6 +51,7 @@ public class UserService {
     }
 
     public Users getUserByUsername(String username) {
+        log.info("Get user by username: {}", username);
         return findByUsername(username);
     }
 

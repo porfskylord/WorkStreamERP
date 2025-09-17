@@ -1,0 +1,6 @@
+// Size: 0 B
+### Get Test
+GET http://localhost:8080/users/test HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6IlJPTEVfQURNSU4iLCJ1c2VySWQiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW4iLCJzdWIiOiJhZG1pbiIsImlzcyI6IlJPTEVfQURNSU4iLCJpYXQiOjE3NTgxMTk4NTgsImV4cCI6MTc1ODEyMzQ1OH0._Q2PCmAGGOZDtO_cMyhUqBvNbcpRXiEGQhIhViTDlqI
+Content-Length: 0
+

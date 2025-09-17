@@ -1,0 +1,17 @@
+// Status: 200, time: 72ms, size: 167 B
+### Direct Auth Service Test
+POST http://localhost:8081/auth/login HTTP/1.1
+cache-control: no-cache, no-store, max-age=0, must-revalidate
+content-type: application/json
+date: Wed, 17 Sep 2025 13:33:36 GMT
+expires: 0
+pragma: no-cache
+transfer-encoding: chunked
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-xss-protection: 0
+
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlzcyI6IlJPTEVfVVNFUiIsImlhdCI6MTc1ODExNjAxNiwiZXhwIjoxNzU4MTE2MDE5fQ.PBl0_x-JWpTAKjmgze67mDBAAGVFRqsRVhLzMsWET74"
+}
+>> D:\JAVAPROGRAMMING\ALLProjects\WorkStreamERP\.idea\httpClient\09-17\Direct Auth Service Test\2025-09-17T190336.json
