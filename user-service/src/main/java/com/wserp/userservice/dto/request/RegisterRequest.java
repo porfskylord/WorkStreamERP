@@ -1,5 +1,6 @@
 package com.wserp.userservice.dto.request;
 
+import com.wserp.userservice.entity.enums.Role;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -14,4 +15,6 @@ public class RegisterRequest {
     private String password;
     @Email(message = "Email should be valid")
     private String email;
+    @NotNull(message = "Role is required")
+    private Role role;
 }

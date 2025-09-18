@@ -2,6 +2,7 @@ package com.wserp.authservice.utils;
 
 import com.wserp.authservice.dto.UserDto;
 import com.wserp.commondto.AuthUserDto;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @RequiredArgsConstructor
+@Data
 public class CustomUserDetails implements UserDetails {
     private final UserDto user;
 

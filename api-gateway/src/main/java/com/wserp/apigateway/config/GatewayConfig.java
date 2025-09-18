@@ -60,7 +60,7 @@ public class GatewayConfig {
                                         .setKeyResolver(userKeyResolver())
                                         .setStatusCode(HttpStatus.TOO_MANY_REQUESTS)
                                 )
-                                .metadata(Map.of("responseTimeout", "2000"))
+                                .metadata(Map.of("responseTimeout", "10000"))
                         )
                         .uri("lb://AUTH-SERVICE:8081"))
 
@@ -81,10 +81,30 @@ public class GatewayConfig {
                                         .setKeyResolver(userKeyResolver())
                                         .setStatusCode(HttpStatus.TOO_MANY_REQUESTS)
                                 )
-                                .metadata(Map.of("responseTimeout", "2000"))
+                                .metadata(Map.of("responseTimeout", "10000"))
 
                         )
                         .uri("lb://USER-SERVICE:8082"))
+
+                .route("project-service", r -> r.path("/api/projects/**")
+                        .filters(f -> f.stripPrefix(1).filter(filter)
+                                .circuitBreaker(config -> config
+                                        .setName("projectServiceCircuitBreaker")
+                                        .setFallbackUri("forward:/projectFallback")
+                                        .setStatusCodes(Set.of(
+                                                GatewayStatus.BAD_GATEWAY.toString(),
+                                                GatewayStatus.INTERNAL_SERVER_ERROR.toString(),
+                                                GatewayStatus.SERVICE_UNAVAILABLE.toString(),
+                                                GatewayStatus.GATEWAY_TIMEOUT.toString()))
+                                )
+                                .requestRateLimiter(config -> config
+                                        .setRateLimiter(redisRateLimiter())
+                                        .setKeyResolver(userKeyResolver())
+                                        .setStatusCode(HttpStatus.TOO_MANY_REQUESTS)
+                                )
+                                .metadata(Map.of("responseTimeout", "10000"))
+                        )
+                        .uri("lb://PROJECT-SERVICE:8083"))
                 .build();
     }
 }

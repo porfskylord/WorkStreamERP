@@ -23,7 +23,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
 
     public Users saveUser(RegisterRequest request) {
@@ -37,7 +36,7 @@ public class UserService {
         requestedUser.setUsername(request.getUsername());
         requestedUser.setPassword(passwordEncoder.encode(request.getPassword()));
         requestedUser.setEmail(request.getEmail());
-        requestedUser.setRole(Role.USER);
+        requestedUser.setRole(request.getRole());
         requestedUser.setActive(Active.ACTIVE);
         return userRepository.save(requestedUser);
     }

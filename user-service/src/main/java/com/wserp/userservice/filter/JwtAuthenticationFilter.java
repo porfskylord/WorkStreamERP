@@ -1,6 +1,7 @@
 package com.wserp.userservice.filter;
 
 
+import com.wserp.userservice.utills.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -34,9 +35,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
                 Claims claims = jwtUtil.getClaims(token.substring(7));
 
-                SimpleGrantedAuthority authority = new SimpleGrantedAuthority(claims.getIssuer());
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        claims.getSubject(), null, Collections.singleton(authority));
+                CustomPrincipal customPrincipal = new CustomPrincipal(claims.get("userId").toString(), claims.getSubject(),claims.get("email").toString());
+
+                SimpleGrantedAuthority authority = new SimpleGrantedAuthority(claims.get("role").toString());
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(customPrincipal, null, Collections.singleton(authority));
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);

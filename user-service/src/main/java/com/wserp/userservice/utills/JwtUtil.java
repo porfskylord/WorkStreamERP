@@ -1,4 +1,4 @@
-package com.wserp.userservice.filter;
+package com.wserp.userservice.utills;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

@@ -5,7 +5,6 @@ spring:
 server:
   port: 8080
 
-# Eureka Client Configuration
 eureka:
   client:
     serviceUrl:

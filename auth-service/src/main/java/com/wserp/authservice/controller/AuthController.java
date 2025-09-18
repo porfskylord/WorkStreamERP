@@ -6,6 +6,7 @@ import com.wserp.authservice.dto.request.RegisterDto;
 import com.wserp.authservice.dto.request.RegisterRequest;
 import com.wserp.authservice.service.AuthService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +21,13 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login(@RequestBody LoginRequest request){
+    public ResponseEntity<TokenDto> login(@RequestBody @Valid LoginRequest request){
         log.info("Login request: {} {}", request.getUsername(), request.getPassword());
         return ResponseEntity.ok(authService.login(request));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterDto> register(@RequestBody RegisterRequest request){
+    public ResponseEntity<RegisterDto> register(@RequestBody @Valid RegisterRequest request){
         log.info("Register request: {} {}", request.getUsername(), request.getPassword());
         return ResponseEntity.ok(authService.register(request));
     }

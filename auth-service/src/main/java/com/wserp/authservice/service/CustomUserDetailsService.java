@@ -6,8 +6,6 @@ import com.wserp.authservice.exception.UserNotFoundException;
 import com.wserp.authservice.utils.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,7 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserServiceClient userServiceClient;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {
             UserDto userDto = userServiceClient.getUserByUsername(username).getBody();
             if (userDto == null) {

@@ -16,4 +16,9 @@ public class FallbackController {
     public Mono<String> userFallback() {
         return Mono.just("User Service is taking too long to respond or is down. Please try again later.");
     }
+
+    @RequestMapping("/projectFallback")
+    public Mono<String> projectFallback() {
+        return Mono.just("Project Service is taking too long to respond or is down. Please try again later.");
+    }
 }
