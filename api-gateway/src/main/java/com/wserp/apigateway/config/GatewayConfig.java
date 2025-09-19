@@ -60,7 +60,7 @@ public class GatewayConfig {
                                         .setKeyResolver(userKeyResolver())
                                         .setStatusCode(HttpStatus.TOO_MANY_REQUESTS)
                                 )
-                                .metadata(Map.of("responseTimeout", "10000"))
+                                //.metadata(Map.of("responseTimeout", ""))
                         )
                         .uri("lb://AUTH-SERVICE:8081"))
 

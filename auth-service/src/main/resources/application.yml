@@ -16,6 +16,9 @@ spring:
   security:
     user:
       password-ecoder: bcrypt
+  output:
+    ansi:
+      enabled: ALWAYS
 
 # OpenAPI Configuration
 application-title: Auth Service API

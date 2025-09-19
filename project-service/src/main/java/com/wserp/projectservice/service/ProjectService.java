@@ -1,5 +1,8 @@
 package com.wserp.projectservice.service;
 
+import com.wserp.projectservice.client.UserServiceClient;
+import com.wserp.projectservice.dto.MemberDto;
+import com.wserp.projectservice.dto.ProjectMemberEvent;
 import com.wserp.projectservice.dto.request.AddProjectMembers;
 import com.wserp.projectservice.dto.request.ProjectRequest;
 import com.wserp.projectservice.dto.request.UpdateProjectRequest;
@@ -13,6 +16,7 @@ import com.wserp.projectservice.filter.CustomPrincipal;
 import com.wserp.projectservice.repository.ProjectMembersRepository;
 import com.wserp.projectservice.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +31,8 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final ProjectMembersRepository projectMembersRepository;
+    private final UserServiceClient userServiceClient;
+    private final KafkaTemplate<String, ProjectMemberEvent> kafkaTemplate;
 
     //-------------------------------------------------------------Project Service Methods---------------------------------------------------------------------
 
@@ -120,12 +126,29 @@ public class ProjectService {
 
     public ProjectMembers addProjectMembers(String projectId, AddProjectMembers addProjectMembers) {
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new NotFoundException("Project not found"));
+        CustomPrincipal customPrincipal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        MemberDto memberDto = userServiceClient.getUserByUsername(addProjectMembers.getUserName()).getBody();
+
+        if(memberDto == null) {
+            throw new NotFoundException("User not found");
+        }
+
 
         ProjectMembers projectMembers = new ProjectMembers();
         projectMembers.setId(UUID.randomUUID().toString());
         projectMembers.setProject(project);
-        projectMembers.setUserId(addProjectMembers.getUserId());
+        projectMembers.setUserId(memberDto.getId());
         projectMembers.setRole(addProjectMembers.getRole());
+
+        ProjectMemberEvent event = ProjectMemberEvent.builder()
+                .projectTitle(project.getName())
+                .userName(memberDto.getName())
+                .userEmail(memberDto.getEmail())
+                .role(addProjectMembers.getRole().name())
+                .addedBy(customPrincipal.getUsername())
+                .build();
+
+        kafkaTemplate.send("project-member-topic", event);
 
         return projectMembersRepository.save(projectMembers);
 

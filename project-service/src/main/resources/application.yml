@@ -14,7 +14,11 @@ spring:
       format_sql: true
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
-
+  kafka:
+    bootstrap-servers: localhost:9092
+  output:
+    ansi:
+      enabled: ALWAYS
 server:
   port: 8083
 

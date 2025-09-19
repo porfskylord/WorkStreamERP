@@ -14,7 +14,9 @@ spring:
       format_sql: true
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
-
+  output:
+    ansi:
+      enabled: ALWAYS
 server:
   port: 8082
 

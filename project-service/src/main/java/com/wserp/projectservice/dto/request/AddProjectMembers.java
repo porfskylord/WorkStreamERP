@@ -5,7 +5,6 @@ import lombok.Data;
 
 @Data
 public class AddProjectMembers {
-    private String projectId;
-    private String userId;
+    private String userName;
     private Role role;
 }
