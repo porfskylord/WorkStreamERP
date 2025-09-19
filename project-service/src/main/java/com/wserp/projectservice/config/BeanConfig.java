@@ -1,6 +1,5 @@
 package com.wserp.projectservice.config;
 
-import com.wserp.projectservice.dto.ProjectMemberEvent;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.modelmapper.Conditions;
@@ -38,12 +37,12 @@ public class BeanConfig {
     // -------------------------------------------------Kafka Config--------------------------------------------------------------
 
     @Bean
-    public KafkaTemplate<String, ProjectMemberEvent> kafkaTemplate() {
+    public KafkaTemplate<String, Object> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
     @Bean
-    public ProducerFactory<String, ProjectMemberEvent> producerFactory() {
+    public ProducerFactory<String, Object> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
@@ -53,7 +52,7 @@ public class BeanConfig {
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        props.put(JsonSerializer.ADD_TYPE_INFO_HEADERS, false);
+        props.put(JsonSerializer.ADD_TYPE_INFO_HEADERS, true);
         props.put(ProducerConfig.ACKS_CONFIG, "all");
         props.put(ProducerConfig.RETRIES_CONFIG, 3);
         props.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
@@ -62,4 +61,5 @@ public class BeanConfig {
         props.put(ProducerConfig.CLIENT_ID_CONFIG, "project-service-producer");
         return props;
     }
+
 }
