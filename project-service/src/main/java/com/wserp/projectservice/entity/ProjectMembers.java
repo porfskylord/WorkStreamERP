@@ -17,7 +17,7 @@ public class ProjectMembers extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id",nullable = false)
     private Project project;
-    @Column(name = "user_id",nullable = false)
+    @Column(name = "user_id",nullable = false,unique = true)
     private String userId;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

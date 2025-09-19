@@ -9,6 +9,7 @@ import com.wserp.userservice.entity.enums.Role;
 import com.wserp.userservice.exeption.ConfilictException;
 import com.wserp.userservice.exeption.NotFoundException;
 import com.wserp.userservice.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -25,6 +26,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
     public Users saveUser(RegisterRequest request) {
 
         if(userRepository.findByUsername(request.getUsername()).isPresent()){
@@ -58,6 +60,7 @@ public class UserService {
         return findByEmail(email);
     }
 
+    @Transactional
     public Users updateUser(String id, UserUpdateRequest request) {
         Users user = findUserById(id);
 
@@ -77,6 +80,7 @@ public class UserService {
 
     }
 
+    @Transactional
     public void deleteUser(String id) {
         Users user = findUserById(id);
         user.setActive(Active.INACTIVE);

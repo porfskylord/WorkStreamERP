@@ -1,11 +1,14 @@
-package com.wserp.projectservice.dto;
+package com.wserp.commondto;
 
-import com.wserp.projectservice.entity.enums.Role;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProjectMemberEvent {
     private String projectTitle;
     private String userName;

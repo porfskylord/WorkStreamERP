@@ -1,8 +1,8 @@
 package com.wserp.projectservice.service;
 
+import com.wserp.commondto.ProjectMemberEvent;
 import com.wserp.projectservice.client.UserServiceClient;
 import com.wserp.projectservice.dto.MemberDto;
-import com.wserp.projectservice.dto.ProjectMemberEvent;
 import com.wserp.projectservice.dto.request.AddProjectMembers;
 import com.wserp.projectservice.dto.request.ProjectRequest;
 import com.wserp.projectservice.dto.request.UpdateProjectRequest;
@@ -15,13 +15,13 @@ import com.wserp.projectservice.exeptions.NotFoundException;
 import com.wserp.projectservice.filter.CustomPrincipal;
 import com.wserp.projectservice.repository.ProjectMembersRepository;
 import com.wserp.projectservice.repository.ProjectRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,10 +32,11 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final ProjectMembersRepository projectMembersRepository;
     private final UserServiceClient userServiceClient;
-    private final KafkaTemplate<String, ProjectMemberEvent> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     //-------------------------------------------------------------Project Service Methods---------------------------------------------------------------------
 
+    @Transactional
     public Project createProject(ProjectRequest request) {
         CustomPrincipal customPrincipal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(projectRepository.findProjectByName(request.getName()).isPresent()) {
@@ -61,6 +62,7 @@ public class ProjectService {
     }
 
 
+    @Transactional
     public Project updateProject(String id, UpdateProjectRequest request) {
         Project project = projectRepository.findById(id).orElseThrow(() -> new NotFoundException("Project not found"));
 
@@ -83,12 +85,14 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
+    @Transactional
     public void deleteProject(String id) {
         Project project = projectRepository.findById(id).orElseThrow(() -> new NotFoundException("Project not found"));
         project.setStatus(ProjectStatus.CANCELLED);
         projectRepository.save(project);
     }
 
+    @Transactional
     public Project updateProjectStatus(String id, UpdateStatus updateStatus) {
         Project project = projectRepository.findById(id).orElseThrow(() -> new NotFoundException("Project not found"));
 
@@ -105,6 +109,7 @@ public class ProjectService {
         return projectRepository.save(project);
 
     }
+
 
     public List<Project> getAllProjects(String clientId, String status) {
         if(clientId != null && status != null) {
@@ -124,6 +129,7 @@ public class ProjectService {
 
     //-----------------------------------------------------------Project Members Service Methods----------------------------------------------------------------
 
+    @Transactional
     public ProjectMembers addProjectMembers(String projectId, AddProjectMembers addProjectMembers) {
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new NotFoundException("Project not found"));
         CustomPrincipal customPrincipal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -160,6 +166,7 @@ public class ProjectService {
         return projectMembersRepository.findAllByProjectId(project.getId());
     }
 
+    @Transactional
     public void deleteProjectMember(String projectId, String memberId) {
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new NotFoundException("Project not found"));
         ProjectMembers projectMembers = projectMembersRepository.findByProjectIdAndUserId(project.getId(), memberId).orElseThrow(() -> new NotFoundException("Project member not found"));
