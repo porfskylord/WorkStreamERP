@@ -4,7 +4,7 @@ import com.wserp.projectservice.dto.ProjectDto;
 import com.wserp.projectservice.dto.request.ProjectRequest;
 import com.wserp.projectservice.dto.request.UpdateProjectRequest;
 import com.wserp.projectservice.dto.request.UpdateStatus;
-import com.wserp.projectservice.filter.CustomPrincipal;
+import com.wserp.projectservice.filter.CurrentUserData;
 import com.wserp.projectservice.service.ProjectService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +23,7 @@ import java.util.List;
 public class ProjectController {
     private final ProjectService projectService;
     private final ModelMapper modelMapper;
+    private final CurrentUserData currentUserData;
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CLIENT')")
@@ -65,8 +65,7 @@ public class ProjectController {
     @GetMapping("/my-projects")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CLIENT')")
     public ResponseEntity<List<ProjectDto>> getMyProjects() {
-        CustomPrincipal customPrincipal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return ResponseEntity.ok(projectService.getProjectsByClientId(customPrincipal.getUserId()).stream()
+        return ResponseEntity.ok(projectService.getProjectsByClientId(currentUserData.getCurrentUserId()).stream()
                 .map(project -> modelMapper.map(project, ProjectDto.class)).toList());
     }
 }

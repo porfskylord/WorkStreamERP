@@ -1,5 +1,6 @@
 package com.wserp.taskservice.filter;
 
+import com.wserp.models.CustomPrincipal;
 import com.wserp.taskservice.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -36,7 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
                 Claims claims = jwtUtil.getClaims(token.substring(7));
 
-                CustomPrincipal customPrincipal = new CustomPrincipal(claims.get("userId").toString(), claims.getSubject(),claims.get("email").toString());
+                CustomPrincipal customPrincipal = new CustomPrincipal(claims.get("userId").toString(), claims.getSubject(), claims.get("email").toString(), claims.get("role").toString());
 
                 SimpleGrantedAuthority authority = new SimpleGrantedAuthority(claims.get("role").toString());
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(customPrincipal, null, Collections.singleton(authority));
@@ -45,7 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
         } catch (Exception e) {
-            log.error("User is not authenticated",e.getMessage());
+            log.error("User is not authenticated", e.getMessage());
         }
         filterChain.doFilter(request, response);
     }

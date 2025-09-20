@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import reactor.core.publisher.Mono;
 
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -41,25 +40,25 @@ public class GatewayConfig {
     }
 
     @Bean
-    public RouteLocator routes(RouteLocatorBuilder builder){
+    public RouteLocator routes(RouteLocatorBuilder builder) {
         return builder.routes()
                 .route("auth-service", r -> r.path("/api/auth/**")
                         .filters(f -> f.stripPrefix(1).filter(filter)
-                                .circuitBreaker(config -> config
-                                        .setName("authServiceCircuitBreaker")
-                                        .setFallbackUri("forward:/authFallback")
-                                        .setStatusCodes(Set.of(
-                                                GatewayStatus.BAD_GATEWAY.toString(),
-                                                GatewayStatus.INTERNAL_SERVER_ERROR.toString(),
-                                                GatewayStatus.SERVICE_UNAVAILABLE.toString(),
-                                                GatewayStatus.GATEWAY_TIMEOUT.toString()
-                                        ))
-                                )
-                                .requestRateLimiter(config -> config
-                                        .setRateLimiter(redisRateLimiter())
-                                        .setKeyResolver(userKeyResolver())
-                                        .setStatusCode(HttpStatus.TOO_MANY_REQUESTS)
-                                )
+                                        .circuitBreaker(config -> config
+                                                .setName("authServiceCircuitBreaker")
+                                                .setFallbackUri("forward:/authFallback")
+                                                .setStatusCodes(Set.of(
+                                                        GatewayStatus.BAD_GATEWAY.toString(),
+                                                        GatewayStatus.INTERNAL_SERVER_ERROR.toString(),
+                                                        GatewayStatus.SERVICE_UNAVAILABLE.toString(),
+                                                        GatewayStatus.GATEWAY_TIMEOUT.toString()
+                                                ))
+                                        )
+                                        .requestRateLimiter(config -> config
+                                                .setRateLimiter(redisRateLimiter())
+                                                .setKeyResolver(userKeyResolver())
+                                                .setStatusCode(HttpStatus.TOO_MANY_REQUESTS)
+                                        )
                                 //.metadata(Map.of("responseTimeout", ""))
                         )
                         .uri("lb://AUTH-SERVICE:8081"))
@@ -81,7 +80,6 @@ public class GatewayConfig {
                                         .setKeyResolver(userKeyResolver())
                                         .setStatusCode(HttpStatus.TOO_MANY_REQUESTS)
                                 )
-                                .metadata(Map.of("responseTimeout", "10000"))
 
                         )
                         .uri("lb://USER-SERVICE:8082"))
@@ -102,7 +100,6 @@ public class GatewayConfig {
                                         .setKeyResolver(userKeyResolver())
                                         .setStatusCode(HttpStatus.TOO_MANY_REQUESTS)
                                 )
-                                .metadata(Map.of("responseTimeout", "10000"))
                         )
                         .uri("lb://PROJECT-SERVICE:8083"))
                 .build();

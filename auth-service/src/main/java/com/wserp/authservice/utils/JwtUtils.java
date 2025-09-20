@@ -2,15 +2,11 @@ package com.wserp.authservice.utils;
 
 import com.wserp.authservice.service.CustomUserDetailsService;
 import io.jsonwebtoken.Jwts;
-
 import org.springframework.beans.factory.annotation.Value;
-
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-
 import javax.crypto.spec.SecretKeySpec;
-
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,7 +19,6 @@ public class JwtUtils {
 
     private final SecretKeySpec SECRET_KEY;
     private final long EXPIRATION_TIME;
-
 
 
     public JwtUtils(@Value("${jwt.secret}") String secretString,
@@ -39,9 +34,9 @@ public class JwtUtils {
     public String generateToken(String username) {
         CustomUserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", userDetails.getUser().getId());
+        claims.put("userId", userDetails.user().getId());
         claims.put("role", userDetails.getAuthorities().iterator().next().getAuthority());
-        claims.put("email", userDetails.getUser().getEmail());
+        claims.put("email", userDetails.user().getEmail());
         return createToken(claims, userDetails);
     }
 

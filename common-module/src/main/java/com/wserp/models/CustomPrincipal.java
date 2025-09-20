@@ -1,4 +1,4 @@
-package com.wserp.projectservice.filter;
+package com.wserp.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

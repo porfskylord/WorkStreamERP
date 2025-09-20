@@ -1,6 +1,7 @@
 package com.wserp.projectservice.service;
 
 import com.wserp.commondto.ProjectMemberEvent;
+import com.wserp.enums.ErrorMessage;
 import com.wserp.projectservice.client.UserServiceClient;
 import com.wserp.projectservice.dto.MemberDto;
 import com.wserp.projectservice.dto.request.AddProjectMembers;
@@ -12,18 +13,17 @@ import com.wserp.projectservice.entity.ProjectMembers;
 import com.wserp.projectservice.entity.enums.ProjectStatus;
 import com.wserp.projectservice.exeptions.ConfilictException;
 import com.wserp.projectservice.exeptions.NotFoundException;
-import com.wserp.projectservice.filter.CustomPrincipal;
+import com.wserp.projectservice.filter.CurrentUserData;
 import com.wserp.projectservice.repository.ProjectMembersRepository;
 import com.wserp.projectservice.repository.ProjectRepository;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -33,78 +33,66 @@ public class ProjectService {
     private final ProjectMembersRepository projectMembersRepository;
     private final UserServiceClient userServiceClient;
     private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final CurrentUserData currentUserData;
 
     //-------------------------------------------------------------Project Service Methods---------------------------------------------------------------------
 
     @Transactional
     public Project createProject(ProjectRequest request) {
-        CustomPrincipal customPrincipal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(projectRepository.findProjectByName(request.getName()).isPresent()) {
-            throw new ConfilictException("Project already exists");
+        if (projectRepository.findProjectByName(request.getName()).isPresent()) {
+            throw new ConfilictException(ErrorMessage.PROJECT_NAME_ALREADY_EXISTS.getMessage());
         }
 
-        Project project = new Project();
-        project.setId(UUID.randomUUID().toString());
-        project.setName(request.getName());
-        project.setClientId(customPrincipal.getUserId());
-        project.setClientName(customPrincipal.getUsername());
-        project.setDescription(request.getDescription());
-        project.setStatus(ProjectStatus.NEW);
-
-
+        Project project = Project.builder()
+                .name(request.getName())
+                .clientId(currentUserData.getCurrentUserId())
+                .description(request.getDescription())
+                .status(ProjectStatus.NEW)
+                .build();
+        project.setCreatedBy(currentUserData.getCurrentUserId());
+        project.setUpdatedBy(currentUserData.getCurrentUserId());
         return projectRepository.save(project);
     }
 
 
     public Project getProjectById(String id) {
         return projectRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Project not found"));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.PROJECT_NOT_FOUND.getMessage()));
     }
 
 
     @Transactional
     public Project updateProject(String id, UpdateProjectRequest request) {
-        Project project = projectRepository.findById(id).orElseThrow(() -> new NotFoundException("Project not found"));
-
-        if(request.getName() != null) {
-            project.setName(request.getName());
-        }
-        if(request.getDescription() != null) {
-            project.setDescription(request.getDescription());
-        }
-        if(request.getStatus() != null) {
-            project.setStatus(request.getStatus());
-        }
-        if(request.getStartDate() != null) {
-            project.setStartDate(request.getStartDate());
-        }
-        if(request.getEndDate() != null) {
-            project.setEndDate(request.getEndDate());
-        }
-
+        Project project = projectRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorMessage.PROJECT_NOT_FOUND.getMessage()));
+        project.setName(request.getName());
+        project.setDescription(request.getDescription());
+        project.setStartDate(request.getStartDate());
+        project.setUpdatedBy(currentUserData.getCurrentUserId());
         return projectRepository.save(project);
     }
 
     @Transactional
     public void deleteProject(String id) {
-        Project project = projectRepository.findById(id).orElseThrow(() -> new NotFoundException("Project not found"));
-        project.setStatus(ProjectStatus.CANCELLED);
+        Project project = projectRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorMessage.PROJECT_NOT_FOUND.getMessage()));
+        project.setDeleted(true);
+        project.setDeletedBy(currentUserData.getCurrentUserId());
         projectRepository.save(project);
     }
 
     @Transactional
     public Project updateProjectStatus(String id, UpdateStatus updateStatus) {
-        Project project = projectRepository.findById(id).orElseThrow(() -> new NotFoundException("Project not found"));
+        Project project = projectRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorMessage.PROJECT_NOT_FOUND.getMessage()));
 
-        if(updateStatus.getStatus() == ProjectStatus.IN_PROGRESS){
+        if (updateStatus.getStatus() == ProjectStatus.IN_PROGRESS) {
             project.setStatus(ProjectStatus.IN_PROGRESS);
             project.setStartDate(LocalDate.now());
-        } else if(updateStatus.getStatus() == ProjectStatus.COMPLETED){
+        } else if (updateStatus.getStatus() == ProjectStatus.COMPLETED) {
             project.setStatus(ProjectStatus.COMPLETED);
             project.setEndDate(LocalDate.now());
         } else {
             project.setStatus(updateStatus.getStatus());
         }
+        project.setUpdatedBy(currentUserData.getCurrentUserId());
 
         return projectRepository.save(project);
 
@@ -112,15 +100,15 @@ public class ProjectService {
 
 
     public List<Project> getAllProjects(String clientId, String status) {
-        if(clientId != null && status != null) {
-            return projectRepository.findAllByClientIdAndStatus(clientId, ProjectStatus.valueOf(status));
-        } else if(clientId != null) {
-            return projectRepository.findAllByClientId(clientId);
-        } else if(status != null) {
-            return projectRepository.findAllByStatus(ProjectStatus.valueOf(status));
-        } else {
-            return projectRepository.findAll();
+        ProjectStatus statusEnum = null;
+        if (status != null) {
+            try {
+                statusEnum = ProjectStatus.valueOf(status.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new BadRequestException(ErrorMessage.INVALID_PROJECT_STATUS.getMessage());
+            }
         }
+        return projectRepository.findProjectsByFilters(clientId, statusEnum);
     }
 
     public List<Project> getProjectsByClientId(String clientId) {
@@ -131,45 +119,38 @@ public class ProjectService {
 
     @Transactional
     public ProjectMembers addProjectMembers(String projectId, AddProjectMembers addProjectMembers) {
-        Project project = projectRepository.findById(projectId).orElseThrow(() -> new NotFoundException("Project not found"));
-        CustomPrincipal customPrincipal = (CustomPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        MemberDto memberDto = userServiceClient.getUserByUsername(addProjectMembers.getUserName()).getBody();
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new NotFoundException(ErrorMessage.PROJECT_NOT_FOUND.getMessage()));
+        MemberDto memberDto = userServiceClient.getUserById(addProjectMembers.getUserId()).getBody();
 
-        if(memberDto == null) {
-            throw new NotFoundException("User not found");
-        }
-
-
-        ProjectMembers projectMembers = new ProjectMembers();
-        projectMembers.setId(UUID.randomUUID().toString());
-        projectMembers.setProject(project);
-        projectMembers.setUserId(memberDto.getId());
-        projectMembers.setRole(addProjectMembers.getRole());
+        ProjectMembers projectMembers = ProjectMembers.builder()
+                .project(project)
+                .userId(addProjectMembers.getUserId())
+                .role(addProjectMembers.getRole())
+                .addedBy(currentUserData.getCurrentUserId())
+                .build();
 
         ProjectMemberEvent event = ProjectMemberEvent.builder()
                 .projectTitle(project.getName())
                 .userName(memberDto.getName())
                 .userEmail(memberDto.getEmail())
                 .role(addProjectMembers.getRole().name())
-                .addedBy(customPrincipal.getUsername())
+                .addedBy(currentUserData.getCurrentUsername())
                 .build();
 
         kafkaTemplate.send("project-member-topic", event);
 
         return projectMembersRepository.save(projectMembers);
 
-
     }
 
     public List<ProjectMembers> getProjectMembers(String projectId) {
-        Project project = projectRepository.findById(projectId).orElseThrow(() -> new NotFoundException("Project not found"));
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new NotFoundException(ErrorMessage.PROJECT_NOT_FOUND.getMessage()));
         return projectMembersRepository.findAllByProjectId(project.getId());
     }
 
     @Transactional
     public void deleteProjectMember(String projectId, String memberId) {
-        Project project = projectRepository.findById(projectId).orElseThrow(() -> new NotFoundException("Project not found"));
-        ProjectMembers projectMembers = projectMembersRepository.findByProjectIdAndUserId(project.getId(), memberId).orElseThrow(() -> new NotFoundException("Project member not found"));
+        ProjectMembers projectMembers = projectMembersRepository.findByProjectIdAndUserId(projectId, memberId).orElseThrow(() -> new NotFoundException(ErrorMessage.PROJECT_MEMBER_NOT_FOUND.getMessage()));
         projectMembersRepository.delete(projectMembers);
     }
 }

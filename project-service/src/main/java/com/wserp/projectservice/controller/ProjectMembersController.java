@@ -1,7 +1,7 @@
 package com.wserp.projectservice.controller;
 
+import com.wserp.projectservice.dto.ProjectMembersDto;
 import com.wserp.projectservice.dto.request.AddProjectMembers;
-import com.wserp.projectservice.dto.request.ProjectMembersDto;
 import com.wserp.projectservice.service.ProjectService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

@@ -1,12 +1,12 @@
-package com.wserp.projectservice.client;
+package com.wserp.taskservice.client;
 
-import com.wserp.projectservice.dto.MemberDto;
+import com.wserp.taskservice.dto.MemberDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "USER-SERVICE", url = "http://localhost:8082")
+@FeignClient(name = "USER-SERVICE")
 public interface UserServiceClient {
 
     @GetMapping("/users/byId/{userId}")

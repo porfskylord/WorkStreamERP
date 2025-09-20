@@ -1,10 +1,8 @@
 package com.wserp.projectservice.entity;
 
+import com.wserp.models.BaseEntity;
 import com.wserp.projectservice.entity.enums.ProjectStatus;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,11 +13,16 @@ import java.util.List;
 
 @Data
 @Entity(name = "erp_projects")
+@Table(indexes = {
+        @Index(name = "uk_project_name", columnList = "name", unique = true),
+        @Index(name = "idx_project_client", columnList = "client_id"),
+        @Index(name = "idx_project_status", columnList = "status"),
+})
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Project extends BaseEntity{
-    @Column(nullable = false,unique = true)
+public class Project extends BaseEntity {
+    @Column(nullable = false, unique = true)
     private String name;
     private String description;
 
@@ -29,12 +32,11 @@ public class Project extends BaseEntity{
     @Column(nullable = false)
     private String clientId;
 
-    private String clientName;
-
     private LocalDate startDate;
 
     private LocalDate endDate;
 
-    @OneToMany(mappedBy = "project",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProjectMembers> projectMembers;
+
 }

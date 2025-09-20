@@ -1,5 +1,6 @@
-package com.wserp.userservice.filter;
+package com.wserp.taskservice.filter;
 
+import com.wserp.models.CustomPrincipal;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

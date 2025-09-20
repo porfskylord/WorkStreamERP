@@ -1,4 +1,4 @@
-package com.wserp.projectservice.dto;
+package com.wserp.taskservice.dto;
 
 import lombok.Data;
 

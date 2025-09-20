@@ -19,8 +19,23 @@ spring:
   output:
     ansi:
       enabled: ALWAYS
+  cloud:
+    loadbalancer:
+      retry:
+        enabled: true
 
-# OpenAPI Configuration
+# Feign client configuration
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: basic
+  circuitbreaker:
+    enabled: true
+
+
 application-title: Auth Service API
 application-description: Authentication and Authorization Service for WorkStreamERP
 application-version: 1.0.0
@@ -28,17 +43,7 @@ application-license: Apache 2.0
 
 jwt:
   secret: sEwB7lNM2DQY/K3CUG3R3jQ+5tsezgzNOnSgkAHHPguh2VVn2Bfi4xaX0jXw1VIZ7jvOUMSoHeu+totSMOY7Ow==
-  expiration: 3600000  # 1 hour in milliseconds
+  expiration: 3600000
 
-#feign:
-#  client:
-#    config:
-#      default:
-#        connect-timeout: 5000
-#        read-timeout: 5000
-#        logger-level: basic
-#  compression:
-#    request:
-#      enabled: true
-#    response:
-#      enabled: true
+internal:
+  token: 8nwh07iuSmlU0urIm2SUi4HPo9C1jj1tglJvfmVNfag=
