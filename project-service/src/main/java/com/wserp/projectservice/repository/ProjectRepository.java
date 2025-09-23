@@ -12,6 +12,8 @@ import java.util.Optional;
 public interface ProjectRepository extends JpaRepository<Project, String> {
     List<Project> findAllByClientId(String clientId);
 
+    boolean existsById(String id);
+
     Optional<Project> findProjectByName(String name);
 
     @Query("SELECT p FROM erp_projects p WHERE " +

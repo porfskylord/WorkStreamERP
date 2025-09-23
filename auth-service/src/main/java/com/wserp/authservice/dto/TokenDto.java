@@ -6,5 +6,8 @@ import lombok.Data;
 @Data
 @Builder
 public class TokenDto {
-    private String token;
+    private String accessToken;
+    private String refreshToken;
+    private String accessExpirationTime;
+    private String refreshExpirationTime;
 }

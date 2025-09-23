@@ -51,6 +51,16 @@ public class ProjectService {
                 .build();
         project.setCreatedBy(currentUserData.getCurrentUserId());
         project.setUpdatedBy(currentUserData.getCurrentUserId());
+
+        ProjectMembers projectMembers = ProjectMembers.builder()
+                .project(project)
+                .userId(currentUserData.getCurrentUserId())
+                .role(ProjectRole.PROJECT_MANAGER)
+                .addedBy(currentUserData.getCurrentUserId())
+                .build();
+
+        projectMembersRepository.save(projectMembers);
+
         return projectRepository.save(project);
     }
 
@@ -64,6 +74,9 @@ public class ProjectService {
     @Transactional
     public Project updateProject(String id, UpdateProjectRequest request) {
         Project project = projectRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorMessage.PROJECT_NOT_FOUND.getMessage()));
+        if (!checkProjectMember(id, currentUserData.getCurrentUserId())) {
+            throw new BadRequestException(ErrorMessage.NOT_AUTHORIZED.getMessage());
+        }
         project.setName(request.getName());
         project.setDescription(request.getDescription());
         project.setStartDate(request.getStartDate());
@@ -74,14 +87,21 @@ public class ProjectService {
     @Transactional
     public void deleteProject(String id) {
         Project project = projectRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorMessage.PROJECT_NOT_FOUND.getMessage()));
+        if (!checkProjectMember(id, currentUserData.getCurrentUserId())) {
+            throw new BadRequestException(ErrorMessage.NOT_AUTHORIZED.getMessage());
+        }
         project.setDeleted(true);
         project.setDeletedBy(currentUserData.getCurrentUserId());
         projectRepository.save(project);
     }
 
     @Transactional
-    public Project updateProjectStatus(String id, UpdateStatus updateStatus) {
+    public Project updateProjectStatus(String id, UpdateStatus updateStatus, String currentUserId) {
         Project project = projectRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorMessage.PROJECT_NOT_FOUND.getMessage()));
+
+        if (!checkProjectMember(id, currentUserId)) {
+            throw new BadRequestException(ErrorMessage.NOT_AUTHORIZED.getMessage());
+        }
 
         if (updateStatus.getStatus() == ProjectStatus.IN_PROGRESS) {
             project.setStatus(ProjectStatus.IN_PROGRESS);
@@ -152,5 +172,14 @@ public class ProjectService {
     public void deleteProjectMember(String projectId, String memberId) {
         ProjectMembers projectMembers = projectMembersRepository.findByProjectIdAndUserId(projectId, memberId).orElseThrow(() -> new NotFoundException(ErrorMessage.PROJECT_MEMBER_NOT_FOUND.getMessage()));
         projectMembersRepository.delete(projectMembers);
+    }
+
+    public boolean checkProjectMember(String projectId, String memberId) {
+
+        if (!projectRepository.existsById(projectId)) {
+            throw new NotFoundException(ErrorMessage.PROJECT_NOT_FOUND.getMessage());
+        }
+
+        return projectMembersRepository.existsByProjectIdAndUserId(projectId, memberId);
     }
 }

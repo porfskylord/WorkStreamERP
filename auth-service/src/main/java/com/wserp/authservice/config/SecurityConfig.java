@@ -44,17 +44,15 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth ->
-                                auth.requestMatchers("/auth/**").permitAll()
-                                        .requestMatchers("/swagger-resources/**",
-                                                "/swagger-ui.html/**",
-                                                "/swagger-ui/**",
-                                                "/v3/api-docs/**").permitAll()
-//                                .requestMatchers("/auth/refresh-token").authenticated()
-                )
+                        auth.requestMatchers("/auth/**").permitAll()
+                                .requestMatchers(
+                                        "/swagger-resources/**",
+                                        "/swagger-ui.html/**",
+                                        "/swagger-ui/**",
+                                        "/v3/api-docs/**"
+                                ).permitAll())
                 .authenticationProvider(authenticationProvider());
 
         return http.build();
     }
-
-
 }

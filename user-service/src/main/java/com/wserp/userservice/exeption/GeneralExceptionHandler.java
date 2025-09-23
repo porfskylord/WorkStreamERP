@@ -1,5 +1,6 @@
 package com.wserp.userservice.exeption;
 
+import com.wserp.common.exception.*;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,9 +20,9 @@ import java.util.Map;
 public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
 
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex
-                                                                    ,@NotNull HttpHeaders headers
-                                                                    ,@NotNull HttpStatus status
-                                                                    ,@NotNull WebRequest request) {
+            , @NotNull HttpHeaders headers
+            , @NotNull HttpStatus status
+            , @NotNull WebRequest request) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors()
                 .forEach(error -> errors.put(((FieldError) error).getField(), error.getDefaultMessage()));
@@ -34,7 +35,7 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<?> handleGenericErrorResponse(GenericErrorResponse ex) {
         Map<String, String> errors = new HashMap<>();
         errors.put("error", ex.getMessage());
-        return new ResponseEntity<>(errors, ex.getStatus());
+        return new ResponseEntity<>(errors, ex.getHttpStatus());
     }
 
     @ExceptionHandler(Exception.class)
@@ -70,5 +71,12 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
         Map<String, String> errors = new HashMap<>();
         errors.put("error", ex.getMessage());
         return new ResponseEntity<>(errors, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(WrongInternalToken.class)
+    public ResponseEntity<?> wrongInternalTokenException(WrongInternalToken ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", ex.getMessage());
+        return new ResponseEntity<>(errors, HttpStatus.FORBIDDEN);
     }
 }

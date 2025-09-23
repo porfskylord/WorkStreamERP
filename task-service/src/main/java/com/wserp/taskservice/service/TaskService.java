@@ -1,12 +1,15 @@
 package com.wserp.taskservice.service;
 
+import com.wserp.enums.ErrorMessage;
 import com.wserp.taskservice.dto.Comments;
 import com.wserp.taskservice.dto.request.CommentRequest;
 import com.wserp.taskservice.dto.request.TaskRequest;
 import com.wserp.taskservice.dto.request.UpdateStatus;
 import com.wserp.taskservice.entity.Task;
 import com.wserp.taskservice.entity.enums.TaskStatus;
+import com.wserp.taskservice.exceptions.NotFoundException;
 import com.wserp.taskservice.filter.CurrentUserData;
+import com.wserp.taskservice.repository.TaskAssigneesRepository;
 import com.wserp.taskservice.repository.TaskRepository;
 import com.wserp.taskservice.repository.TastCommentsRepository;
 import jakarta.validation.Valid;
@@ -22,6 +25,7 @@ import java.util.UUID;
 public class TaskService {
     private final TaskRepository taskRepository;
     private final TastCommentsRepository tastCommentsRepository;
+    private final TaskAssigneesRepository taskAssigneesRepository;
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final CurrentUserData currentUserData;
 
@@ -31,6 +35,7 @@ public class TaskService {
         task.setTitle(taskRequest.getTitle());
         task.setDescription(taskRequest.getDescription());
         task.setProjectId(taskRequest.getProjectId());
+        task.setProjectManagerId(currentUserData.getCurrentUserId());
         task.setDeadline(taskRequest.getDeadline());
         task.setPriority(taskRequest.getPriority());
         task.setRate(taskRequest.getRate());
@@ -41,7 +46,7 @@ public class TaskService {
 
     public Task updateTask(String id, @Valid TaskRequest taskRequest) {
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.TASK_NOT_FOUND.getMessage()));
         task.setTitle(taskRequest.getTitle());
         task.setDescription(taskRequest.getDescription());
         task.setProjectId(taskRequest.getProjectId());
@@ -53,12 +58,22 @@ public class TaskService {
     }
 
     public Task updateTaskStatus(String id, @Valid UpdateStatus updateStatus) {
+
     }
 
     public Task getTaskById(String id) {
+        return taskRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.TASK_NOT_FOUND.getMessage()));
     }
 
     public List<Task> getMyTasks(String userId, String role) {
+        if (role.equals("CLIENT")) {
+            return taskRepository.findByProjectManagerId(userId);
+        } else if (role.equals('ADMIN')) {
+
+        } else {
+            return taskRepository.findByAssignedTo(userId);
+        }
     }
 
     public List<Task> getAllTasks(String projectId, String status, String clientId, String assignedTo) {

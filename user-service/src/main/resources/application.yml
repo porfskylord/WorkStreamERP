@@ -17,6 +17,8 @@ spring:
   output:
     ansi:
       enabled: ALWAYS
+  kafka:
+    bootstrap-servers: localhost:9092
 server:
   port: 8082
 
@@ -37,5 +39,24 @@ jwt:
 app:
   system-user-id: 00000000-0000-0000-0000-000000000000
 
-internal:
-  token: 8nwh07iuSmlU0urIm2SUi4HPo9C1jj1tglJvfmVNfag=
+
+application-title: User Service API
+application-description: Authentication and Authorization Service for WorkStreamERP
+application-version: 1.0.0
+application-license: Apache 2.0
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    com.mycompany.discoveryserver: TRACE
+
+grpc:
+  server:
+    port: 50051
+  internal-token: 8nwh07iuSmlU0urIm2SUi4HPo9C1jj1tglJvfmVNfag=
+  client:
+    organization-service:
+      host: localhost
+      port: 50052
+

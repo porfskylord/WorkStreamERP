@@ -21,19 +21,19 @@ public class ProjectMembersController {
     private final ModelMapper modelMapper;
 
     @PostMapping("/{projectId}/members")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CLIENT')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
     public ResponseEntity<ProjectMembersDto> addProjectMembers(@PathVariable String projectId, @RequestBody AddProjectMembers addProjectMembers) {
         return ResponseEntity.ok(modelMapper.map(projectService.addProjectMembers(projectId, addProjectMembers), ProjectMembersDto.class));
     }
 
     @GetMapping("/{projectId}/members")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CLIENT')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
     public ResponseEntity<List<ProjectMembersDto>> getProjectMembers(@PathVariable String projectId) {
         return ResponseEntity.ok(projectService.getProjectMembers(projectId).stream().map(projectMembers -> modelMapper.map(projectMembers, ProjectMembersDto.class)).toList());
     }
 
     @DeleteMapping("/{projectId}/members/{memberId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CLIENT')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
     public ResponseEntity<Void> deleteProjectMember(@PathVariable String projectId, @PathVariable String memberId) {
         projectService.deleteProjectMember(projectId, memberId);
         return ResponseEntity.ok().build();

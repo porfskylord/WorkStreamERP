@@ -18,8 +18,7 @@ public class ProjectDto {
     private String name;
     private String description;
     private ProjectStatus status;
-    private String clientId;
-    private String clientName;
+    private String managerId;
     private LocalDate startDate;
     private LocalDate endDate;
 }

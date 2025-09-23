@@ -2,9 +2,9 @@ package com.wserp.authservice.controller;
 
 import com.wserp.authservice.dto.TokenDto;
 import com.wserp.authservice.dto.request.LoginRequest;
-import com.wserp.authservice.dto.request.RegisterDto;
-import com.wserp.authservice.dto.request.RegisterRequest;
 import com.wserp.authservice.service.AuthService;
+import com.wserp.common.dto.OrganizationRegistrationRequest;
+import com.wserp.common.exception.InvalidTokenException;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,23 +20,35 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthService authService;
 
+    //------------------------------------------------------------For Login-----------------------------------------------------------------------------------
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login(@RequestBody @Valid LoginRequest request){
-        log.info("Login request: {} {}", request.getUsername(), request.getPassword());
+    public ResponseEntity<TokenDto> login(@RequestBody @Valid LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<RegisterDto> register(@RequestBody @Valid RegisterRequest request){
-        log.info("Register request: {} {}", request.getUsername(), request.getPassword());
+    //----------------------------------------------------------For Register-----------------------------------------------------------------------------------
+    @PostMapping("/create-org")
+    public ResponseEntity<?> register(@RequestBody @Valid OrganizationRegistrationRequest request) {
+        log.info("Registering organization: {}", request);
         return ResponseEntity.ok(authService.register(request));
     }
 
-//    @PostMapping("/refresh-token")
-//    public ResponseEntity<TokenDto> refreshToken(){
-//        return ResponseEntity.ok(authService.refreshToken());
-//    }
+    @PostMapping("/refresh-token")
+    public ResponseEntity<TokenDto> refreshToken(@RequestHeader("Authorization") String authHeader) {
+        String token = extractToken(authHeader);
+        return ResponseEntity.ok(authService.refreshToken(token));
 
+    }
+
+    //----------------------------------------------------------For Test-----------------------------------------------------------------------------------
+
+    //----------------------------------------------------------For Extract Token-----------------------------------------------------------------------------------
+    private String extractToken(String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+        throw new InvalidTokenException("Invalid token");
+    }
 
 
 }

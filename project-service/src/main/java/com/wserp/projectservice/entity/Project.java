@@ -30,7 +30,7 @@ public class Project extends BaseEntity {
     private ProjectStatus status;
 
     @Column(nullable = false)
-    private String clientId;
+    private String managerId;
 
     private LocalDate startDate;
 

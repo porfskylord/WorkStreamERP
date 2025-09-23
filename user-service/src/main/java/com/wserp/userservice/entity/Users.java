@@ -1,8 +1,8 @@
 package com.wserp.userservice.entity;
 
-import com.wserp.models.BaseEntity;
-import com.wserp.userservice.entity.enums.Role;
-import com.wserp.userservice.entity.enums.Status;
+import com.wserp.common.enums.Role;
+import com.wserp.common.models.BaseEntity;
+import com.wserp.userservice.entity.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,8 +11,7 @@ import lombok.*;
 @Table(indexes = {
         @Index(name = "idx_users_username", columnList = "username", unique = true),
         @Index(name = "idx_users_email", columnList = "email", unique = true),
-        @Index(name = "idx_users_role", columnList = "role", unique = false),
-        @Index(name = "idx_users_status", columnList = "status")
+        @Index(name = "idx_users_status", columnList = "userStatus")
 })
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,22 +20,19 @@ import lombok.*;
 public class Users extends BaseEntity {
 
     @Column(nullable = false, unique = true)
-    private String username;
-
+    protected String username;
     @Column(nullable = false)
-    private String password;
-
+    protected String password;
     @Column(nullable = false, unique = true)
-    private String email;
-
+    protected String email;
     @Enumerated(EnumType.STRING)
+    protected UserStatus userStatus;
+    @Column(nullable = false)
+    private String name;
+    private String title;
+    private String location;
+    private String bio;
+    private String profileImage;
     private Role role;
-
-    @Enumerated(EnumType.STRING)
-    private Status status;
-
-    @Embedded
-    private UserDetails userDetails;
-
 
 }

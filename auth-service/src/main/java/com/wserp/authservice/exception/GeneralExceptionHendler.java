@@ -1,11 +1,14 @@
 package com.wserp.authservice.exception;
 
+import com.wserp.common.exception.GenericErrorResponse;
+import com.wserp.common.exception.InvalidTokenException;
+import com.wserp.common.exception.ValidationException;
+import com.wserp.common.exception.WrongCredentialsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
@@ -47,22 +50,29 @@ public class GeneralExceptionHendler extends ResponseEntityExceptionHandler {
             org.springframework.http.HttpHeaders headers,
             org.springframework.http.HttpStatusCode status,
             org.springframework.web.context.request.WebRequest request) {
-        
+
         Map<String, Object> response = new LinkedHashMap<>();
         Map<String, String> errors = new HashMap<>();
-        
+
         ex.getBindingResult().getFieldErrors().forEach(error -> {
             String field = error.getField();
             String message = error.getDefaultMessage();
             errors.put(field, message);
         });
-        
+
         response.put("status", status.value());
         response.put("error", "Validation failed");
         response.put("message", "Invalid request content");
         response.put("errors", errors);
         response.put("timestamp", LocalDateTime.now());
-        
+
         return new ResponseEntity<>(response, status);
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public final ResponseEntity<?> handleInvalidTokenException(InvalidTokenException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", ex.getMessage());
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 }

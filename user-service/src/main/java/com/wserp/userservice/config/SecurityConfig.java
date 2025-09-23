@@ -1,6 +1,7 @@
 package com.wserp.userservice.config;
 
-import com.wserp.userservice.filter.JwtAuthenticationFilter;
+
+import com.wserp.common.jwt.JwtAuthenticationFilter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -34,9 +35,7 @@ public class SecurityConfig {
                                 "/swagger-ui.html/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "/users/save",
-                                "/users/byUsername/**",
-                                "/users/byId/**"
+                                "/users/create-org-user"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -47,7 +46,7 @@ public class SecurityConfig {
 
         return http.build();
     }
-    
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -55,7 +54,7 @@ public class SecurityConfig {
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.addExposedHeader("Authorization");
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

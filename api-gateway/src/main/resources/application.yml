@@ -4,9 +4,61 @@ spring:
   output:
     ansi:
       enabled: ALWAYS
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: auth-service
+              uri: lb://AUTH-SERVICE
+              predicates:
+                - Path=/api/auth/**
+              filters:
+                - StripPrefix=1
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter: "#{@redisRateLimiter}"
+                    key-resolver: "#{@userKeyResolver}"
+                    status-code: TOO_MANY_REQUESTS
+                - name: CircuitBreaker
+                  args:
+                    name: authServiceCircuitBreaker
+                    fallback-uri: forward:/authFallback
+                    status-codes: BAD_GATEWAY,INTERNAL_SERVER_ERROR,SERVICE_UNAVAILABLE,GATEWAY_TIMEOUT
 
-server:
-  port: 8080
+            - id: user-service
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/api/users/**
+              filters:
+                - StripPrefix=1
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter: "#{@redisRateLimiter}"
+                    key-resolver: "#{@userKeyResolver}"
+                    status-code: TOO_MANY_REQUESTS
+                - name: CircuitBreaker
+                  args:
+                    name: userServiceCircuitBreaker
+                    fallback-uri: forward:/userFallback
+                    status-codes: BAD_GATEWAY,INTERNAL_SERVER_ERROR,SERVICE_UNAVAILABLE,GATEWAY_TIMEOUT
+
+            - id: project-service
+              uri: lb://PROJECT-SERVICE
+              predicates:
+                - Path=/api/projects/**
+              filters:
+                - StripPrefix=1
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter: "#{@redisRateLimiter}"
+                    key-resolver: "#{@userKeyResolver}"
+                    status-code: TOO_MANY_REQUESTS
+                - name: CircuitBreaker
+                  args:
+                    name: projectServiceCircuitBreaker
+                    fallback-uri: forward:/projectFallback
+                    status-codes: BAD_GATEWAY,INTERNAL_SERVER_ERROR,SERVICE_UNAVAILABLE,GATEWAY_TIMEOUT
 
 eureka:
   client:
@@ -19,3 +71,16 @@ eureka:
 
 jwt:
   secret: sEwB7lNM2DQY/K3CUG3R3jQ+5tsezgzNOnSgkAHHPguh2VVn2Bfi4xaX0jXw1VIZ7jvOUMSoHeu+totSMOY7Ow==
+
+logging:
+  level:
+    org.springframework.cloud.gateway.server.webflux: DEBUG
+    reactor.netty.http.client: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,gateway
+server:
+  port: 8080

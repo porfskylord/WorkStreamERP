@@ -1,6 +1,6 @@
 package com.wserp.projectservice.entity;
 
-import com.wserp.projectservice.entity.enums.Role;
+import com.wserp.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

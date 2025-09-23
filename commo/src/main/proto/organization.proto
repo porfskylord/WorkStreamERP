@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.wserp.common.proto";
+option java_outer_classname = "OrganizationProto";
+
+service OrganizationService {
+  rpc CreateOrganization (OrganizationRequest) returns (OrganizationResponse);
+}
+
+message OrganizationRequest {
+  string name = 1;
+  string ownerId = 2;
+}
+
+message OrganizationResponse {
+  string id = 1;
+  string name = 2;
+  string ownerId = 3;
+}

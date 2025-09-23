@@ -2,9 +2,9 @@ package com.wserp.apigateway.filter;
 
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -17,41 +17,52 @@ import java.util.function.Predicate;
 
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter implements GatewayFilter {
+public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
     private final JwtUtil jwtUtil;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
 
-        final List<String> apiEndpoints = List.of("/auth/login", "/auth/register");
+        final List<String> openApiEndpoints = List.of("/auth/login", "/auth/register", "/auth/test", "/auth/lookup", "/auth/create-org", "/auth/profile");
 
-        Predicate<ServerHttpRequest> isApiSecured = r -> apiEndpoints.stream()
-                .noneMatch(uri -> r.getURI().getPath().contains(uri));
+        Predicate<ServerHttpRequest> isSecured =
+                r -> openApiEndpoints.stream().noneMatch(uri -> r.getURI().getPath().contains(uri));
 
-        if(isApiSecured.test(request)){
-            if(authMissing(request)) return onError(exchange, "Unauthorized");
+        if (isSecured.test(request)) {
+            if (authMissing(request)) {
+                return onError(exchange, "Authorization header is missing");
+            }
 
             String token = request.getHeaders().getOrEmpty("Authorization").get(0);
+            if (token != null && token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
 
-            if(token != null && token.startsWith("Bearer ")) token = token.substring(7);
-
-            try{
+            try {
                 jwtUtil.validateToken(token);
-            }catch(Exception e){
-                return onError(exchange, "Unauthorized");
+            } catch (JwtException e) {
+                return onError(exchange, "Invalid or expired token");
             }
         }
+
         return chain.filter(exchange);
+
     }
 
-    private Mono<Void> onError(ServerWebExchange exchange, String err){
+    private boolean authMissing(ServerHttpRequest request) {
+        return !request.getHeaders().containsKey("Authorization");
+    }
+
+    private Mono<Void> onError(ServerWebExchange exchange, String message) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(HttpStatus.UNAUTHORIZED);
         return response.setComplete();
     }
 
-    private boolean authMissing(ServerHttpRequest request){
-        return !request.getHeaders().containsKey("Authorization");
+    @Override
+    public int getOrder() {
+        return -1;
     }
 }
+

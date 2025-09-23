@@ -12,7 +12,17 @@
         <option value="$PROJECT_DIR$/project-service/pom.xml" />
         <option value="$PROJECT_DIR$/notification-service/pom.xml" />
         <option value="$PROJECT_DIR$/task-service/pom.xml" />
+        <option value="$PROJECT_DIR$/organization-service/pom.xml" />
+        <option value="$PROJECT_DIR$/org-members-service/pom.xml" />
+        <option value="$PROJECT_DIR$/commo/pom.xml" />
       </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/common-module/pom.xml" />
+        <option value="$PROJECT_DIR$/project-service/pom.xml" />
+        <option value="$PROJECT_DIR$/task-service/pom.xml" />
+      </set>
     </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="23" project-jdk-type="JavaSDK">

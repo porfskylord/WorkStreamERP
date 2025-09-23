@@ -1,13 +1,18 @@
-# Use the standard OpenJDK image
+FROM maven:3.9.4-eclipse-temurin-21 AS build
+
+WORKDIR /app
+
+COPY pom.xml ./
+COPY src ./src
+
+RUN mvn clean package
+
 FROM openjdk:21
 
 WORKDIR /app
 
-# Copy the pre-built JAR file
-COPY target/discovery-server-*.jar app.jar
+COPY --from=build /app/target/*.jar discovery-server.jar
 
-# Expose the application ports
 EXPOSE 8761
 
-# Set the entry point
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "discovery-server.jar"]

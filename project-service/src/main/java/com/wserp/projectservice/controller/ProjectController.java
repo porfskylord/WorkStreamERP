@@ -26,7 +26,7 @@ public class ProjectController {
     private final CurrentUserData currentUserData;
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CLIENT')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
     public ResponseEntity<ProjectDto> createProject(@RequestBody @Valid ProjectRequest projectRequest) {
         return ResponseEntity.ok(modelMapper.map(projectService.createProject(projectRequest), ProjectDto.class));
     }
@@ -37,22 +37,22 @@ public class ProjectController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CLIENT')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
     public ResponseEntity<ProjectDto> updateProject(@PathVariable String id, @RequestBody UpdateProjectRequest updateProjectRequest) {
         return ResponseEntity.ok(modelMapper.map(projectService.updateProject(id, updateProjectRequest), ProjectDto.class));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CLIENT')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
     public ResponseEntity<Void> deleteProject(@PathVariable String id) {
         projectService.deleteProject(id);
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/{id}/status")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CLIENT')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
     public ResponseEntity<ProjectDto> updateProjectStatus(@PathVariable String id, @RequestBody UpdateStatus updateStatus) {
-        return ResponseEntity.ok(modelMapper.map(projectService.updateProjectStatus(id, updateStatus), ProjectDto.class));
+        return ResponseEntity.ok(modelMapper.map(projectService.updateProjectStatus(id, updateStatus, currentUserData.getCurrentUserId()), ProjectDto.class));
     }
 
     @GetMapping
@@ -63,7 +63,7 @@ public class ProjectController {
     }
 
     @GetMapping("/my-projects")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CLIENT')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
     public ResponseEntity<List<ProjectDto>> getMyProjects() {
         return ResponseEntity.ok(projectService.getProjectsByClientId(currentUserData.getCurrentUserId()).stream()
                 .map(project -> modelMapper.map(project, ProjectDto.class)).toList());

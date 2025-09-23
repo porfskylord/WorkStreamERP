@@ -4,4 +4,18 @@
     <option name="defaultUnitInitialized" value="true" />
     <option name="renamerInitialized" value="true" />
   </component>
+  <component name="PersistenceUnitSettings">
+    <persistence-units>
+      <persistence-unit moduleName="user-service" name="Default">
+        <packages>
+          <package value="com.wserp.userservice" />
+        </packages>
+      </persistence-unit>
+      <persistence-unit moduleName="auth-service" name="Default">
+        <packages>
+          <package value="com.wserp.authservice" />
+        </packages>
+      </persistence-unit>
+    </persistence-units>
+  </component>
 </project>

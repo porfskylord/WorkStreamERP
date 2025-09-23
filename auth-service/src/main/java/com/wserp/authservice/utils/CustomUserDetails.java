@@ -1,6 +1,6 @@
 package com.wserp.authservice.utils;
 
-import com.wserp.authservice.dto.AuthUserDto;
+import com.wserp.common.dto.AuthUserDto;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,10 +10,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public record CustomUserDetails(AuthUserDto user) implements UserDetails {
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Stream.of(user.getRole())
-                .map(x -> new SimpleGrantedAuthority("ROLE_" + x.name()))
+                .map(x -> new SimpleGrantedAuthority("ROLE_" + x))
                 .collect(Collectors.toList());
     }
 

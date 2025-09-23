@@ -1,0 +1,48 @@
+package com.wserp.orgmembersservice.entity;
+
+
+import com.wserp.common.enums.Role;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UuidGenerator;
+
+import java.time.LocalDateTime;
+
+@Entity(name = "erp_orgmembers")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class OrgMembers {
+
+    @Id
+    @UuidGenerator(style = UuidGenerator.Style.TIME)
+    @GeneratedValue
+    @Column(name = "id", nullable = false, updatable = false, columnDefinition = "VARCHAR(36)")
+    private String id;
+
+    @Column(nullable = false)
+    private String orgId;
+
+    @Column(nullable = false)
+    private String userId;
+
+    @Column(nullable = false)
+    private Role role;
+
+    private String title;
+
+    @Column(nullable = false)
+    private String invitedBy;
+
+    @Column(nullable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+}

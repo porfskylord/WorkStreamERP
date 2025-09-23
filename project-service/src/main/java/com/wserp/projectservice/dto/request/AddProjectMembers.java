@@ -1,6 +1,6 @@
 package com.wserp.projectservice.dto.request;
 
-import com.wserp.projectservice.entity.enums.Role;
+import com.wserp.enums.Role;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 

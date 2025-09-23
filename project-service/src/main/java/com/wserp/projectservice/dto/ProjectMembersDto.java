@@ -1,6 +1,6 @@
 package com.wserp.projectservice.dto;
 
-import com.wserp.projectservice.entity.enums.Role;
+import com.wserp.enums.Role;
 import lombok.Data;
 
 @Data

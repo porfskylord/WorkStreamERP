@@ -24,16 +24,6 @@ spring:
       retry:
         enabled: true
 
-# Feign client configuration
-feign:
-  client:
-    config:
-      default:
-        connectTimeout: 5000
-        readTimeout: 5000
-        loggerLevel: basic
-  circuitbreaker:
-    enabled: true
 
 
 application-title: Auth Service API
@@ -44,6 +34,19 @@ application-license: Apache 2.0
 jwt:
   secret: sEwB7lNM2DQY/K3CUG3R3jQ+5tsezgzNOnSgkAHHPguh2VVn2Bfi4xaX0jXw1VIZ7jvOUMSoHeu+totSMOY7Ow==
   expiration: 3600000
+  refresh-expiration: 604800000
 
 internal:
   token: 8nwh07iuSmlU0urIm2SUi4HPo9C1jj1tglJvfmVNfag=
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    com.mycompany.discoveryserver: TRACE
+
+grpc:
+  client:
+    user-service:
+      host: localhost
+      port: 50051
