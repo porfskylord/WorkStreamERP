@@ -1,8 +1,8 @@
 spring:
   application:
-    name: ORGMEMBERS-SERVICE
+    name: INVITE-SERVICE
   datasource:
-    url: jdbc:postgresql://localhost:5432/erp_orgmembers_db
+    url: jdbc:postgresql://localhost:5432/erp_invite_db
     username: postgres
     password: admin1234
   jpa:
@@ -19,11 +19,8 @@ spring:
       enabled: ALWAYS
   kafka:
     bootstrap-servers: localhost:9092
-    group-id: org-members-service
-    auto-offset-reset: earliest
-
 server:
-  port: 8084
+  port: 8085
 
 eureka:
   client:
@@ -41,13 +38,10 @@ jwt:
 
 app:
   system-user-id: 00000000-0000-0000-0000-000000000000
+  invite-url: http://localhost:8085/invite/token/
 
-internal:
-  token: 8nwh07iuSmlU0urIm2SUi4HPo9C1jj1tglJvfmVNfag=
-
-
-application-title: Organization Members Service API
-application-description: Organization Members Service for WorkStreamERP
+application-title: Invite Service API
+application-description: Invite Service for WorkStreamERP
 application-version: 1.0.0
 application-license: Apache 2.0
 
@@ -56,6 +50,14 @@ logging:
     root: INFO
     org.springframework.web: DEBUG
     com.mycompany.discoveryserver: TRACE
+
 grpc:
-  server:
-    port: 50053
+  client:
+    orgmember-service:
+      host: localhost
+      port: 50053
+    user-service:
+      host: localhost
+      port: 50051
+
+

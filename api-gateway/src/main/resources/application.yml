@@ -43,10 +43,10 @@ spring:
                     fallback-uri: forward:/userFallback
                     status-codes: BAD_GATEWAY,INTERNAL_SERVER_ERROR,SERVICE_UNAVAILABLE,GATEWAY_TIMEOUT
 
-            - id: project-service
-              uri: lb://PROJECT-SERVICE
+            - id: invite-service
+              uri: lb://INVITE-SERVICE
               predicates:
-                - Path=/api/projects/**
+                - Path=/api/invite/**
               filters:
                 - StripPrefix=1
                 - name: RequestRateLimiter
@@ -56,7 +56,7 @@ spring:
                     status-code: TOO_MANY_REQUESTS
                 - name: CircuitBreaker
                   args:
-                    name: projectServiceCircuitBreaker
+                    name: inviteServiceCircuitBreaker
                     fallback-uri: forward:/projectFallback
                     status-codes: BAD_GATEWAY,INTERNAL_SERVER_ERROR,SERVICE_UNAVAILABLE,GATEWAY_TIMEOUT
 

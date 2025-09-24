@@ -16,4 +16,4 @@ spring:
     ansi:
       enabled: ALWAYS
 server:
-  port: 8084
+  port: 8086

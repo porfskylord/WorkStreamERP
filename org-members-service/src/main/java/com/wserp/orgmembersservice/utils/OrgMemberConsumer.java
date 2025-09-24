@@ -1,6 +1,6 @@
 package com.wserp.orgmembersservice.utils;
 
-import com.wserp.common.dto.OrgMembersRequest;
+import com.wserp.common.dto.OrgMembersEvent;
 import com.wserp.orgmembersservice.service.OrgMembersService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @KafkaListener(
-        topics = {"org-member-topic"},
+        topics = {"add-org-member-topic"},
         groupId = "org-members-service",
         containerFactory = "kafkaListenerContainerFactory"
 )
@@ -23,12 +23,12 @@ public class OrgMemberConsumer {
 
 
     @KafkaHandler
-    public void handleOrgMember(OrgMembersRequest orgMembersRequest, Acknowledgment ack) {
+    public void handleOrgMember(OrgMembersEvent orgMembersEvent, Acknowledgment ack) {
         try {
-            orgMembersService.saveOrgMembers(orgMembersRequest);
+            orgMembersService.saveOrgMembers(orgMembersEvent);
             ack.acknowledge();
         } catch (Exception e) {
-            log.error("Failed to handle OrgMembersRequest", e);
+            log.error("Failed to handle OrgMembersEvent", e);
             throw e;
         }
     }

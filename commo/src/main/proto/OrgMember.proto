@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.wserp.common.proto";
+option java_outer_classname = "OrgMemberProto";
+
+service OrgMemberService {
+  rpc GetOrgMember (OrgMemberRequest) returns (OrgMemberResponse);
+}
+
+message OrgMemberRequest {
+  string orgId = 1;
+  string userId = 2;
+}
+
+message OrgMemberResponse {
+  string orgId = 1;
+  string orgName = 2;
+  string userId = 3;
+  string userName = 4;
+}

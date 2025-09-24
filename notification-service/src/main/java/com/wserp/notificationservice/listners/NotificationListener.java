@@ -1,9 +1,7 @@
 package com.wserp.notificationservice.listners;
 
 
-
-import com.wserp.commondto.ProjectMemberEvent;
-import com.wserp.commondto.TaskAssignedEvent;
+import com.wserp.common.dto.InviteEvent;
 import com.wserp.notificationservice.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +14,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 @KafkaListener(
-        topics = {"project-member-topic", "task-assigned-topic"},
+        topics = {"project-member-topic", "task-assigned-topic", "invite-topic"},
         groupId = "notification-service",
         containerFactory = "kafkaListenerContainerFactory"
 )
@@ -25,40 +23,17 @@ public class NotificationListener {
     private final EmailService emailService;
 
     @KafkaHandler
-    public void handleProjectMember(ProjectMemberEvent event, Acknowledgment ack) {
+    public void handleInvite(InviteEvent event, Acknowledgment ack) {
         try {
-            String subject = "Project Member Added";
-            String body = String.format(
-                    "Hi %s,%n%nYou have been added as a member to the project \"%s\" as %s.%n%nAdded by: %s",
-                    event.getUserName() != null ? event.getUserName() : "there",
-                    event.getProjectTitle(),
-                    event.getRole(),
-                    event.getAddedBy()
-            );
+            String subject = "Invite to join the " + event.getOrgName();
 
-            emailService.sendEmail(event.getUserEmail(), subject, body);
+            String body = "Hi " + event.getName() + "\n\nYou have been invited to join the organization " + event.getOrgName() + " as " + event.getRole() + " by " + event.getInviteBy() + "\n\nLink: " + event.getInviteUlr() + "\n\nThank You";
+
+            emailService.sendEmail(event.getEmail(), subject, body);
+
             ack.acknowledge();
         } catch (Exception e) {
-            log.error("Failed to handle ProjectMemberEvent", e);
-            throw e;
-        }
-    }
-
-    @KafkaHandler
-    public void handleTaskAssigned(TaskAssignedEvent event, Acknowledgment ack) {
-        try {
-            String subject = "Task Assigned";
-            String body = String.format(
-                    "Hi %s,%n%nYou have been assigned a new task: \"%s\" in project \"%s\".%n%nAssigned by: %s",
-                    event.getUserName(),
-                    event.getTaskTitle(),
-                    event.getProjectTitle(),
-                    event.getAssignedBy()
-            );
-            emailService.sendEmail(event.getUserEmail(), subject, body);
-            ack.acknowledge();
-        } catch (Exception e) {
-            log.error("Failed to handle TaskAssignedEvent", e);
+            log.error("Failed to handle InviteEvent", e);
             throw e;
         }
     }

@@ -7,6 +7,23 @@ option java_outer_classname = "UserProto";
 service UserService {
   rpc CreateUser (UserRequest) returns (UserResponse);
   rpc getUserByUsernameOrEmail (GetUserByUsernameOrEmailRequest) returns (AuthUserResponse);
+  rpc CreateUserByInvite (CreateUserByInviteRequest) returns (CreateUserResponse);
+}
+
+message CreateUserByInviteRequest {
+  string name = 1;
+  string email = 2;
+  string password = 3;
+  string Role = 4;
+  string orgId = 5;
+  string orgName = 6;
+  string title = 7;
+}
+
+message CreateUserResponse {
+  string id = 1;
+  string username = 2;
+  string role = 6;
 }
 
 message UserRequest {

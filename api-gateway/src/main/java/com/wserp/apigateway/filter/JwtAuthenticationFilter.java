@@ -24,7 +24,7 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
 
-        final List<String> openApiEndpoints = List.of("/auth/login", "/auth/register", "/auth/test", "/auth/lookup", "/auth/create-org", "/auth/profile");
+        final List<String> openApiEndpoints = List.of("/auth/login", "/auth/register", "/auth/test", "/auth/lookup", "/auth/create-org", "/auth/profile", "/invite/token/**");
 
         Predicate<ServerHttpRequest> isSecured =
                 r -> openApiEndpoints.stream().noneMatch(uri -> r.getURI().getPath().contains(uri));

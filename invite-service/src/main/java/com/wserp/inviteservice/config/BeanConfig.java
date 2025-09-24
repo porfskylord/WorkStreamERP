@@ -1,4 +1,4 @@
-package com.wserp.orgmembersservice.config;
+package com.wserp.inviteservice.config;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -20,7 +20,6 @@ import java.util.Map;
 
 @Configuration
 public class BeanConfig {
-
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
@@ -61,7 +60,7 @@ public class BeanConfig {
         props.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
         props.put(ProducerConfig.LINGER_MS_CONFIG, 1);
         props.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 33554432);
-        props.put(ProducerConfig.CLIENT_ID_CONFIG, "orgmembers-service-producer");
+        props.put(ProducerConfig.CLIENT_ID_CONFIG, "invite-service-producer");
         return props;
     }
 }

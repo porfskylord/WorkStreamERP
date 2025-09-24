@@ -1,6 +1,7 @@
 package com.wserp.userservice.service;
 
-import com.wserp.common.dto.OrgMembersRequest;
+
+import com.wserp.common.dto.OrgMembersEvent;
 import com.wserp.common.enums.Role;
 import com.wserp.common.proto.*;
 import com.wserp.userservice.entity.Users;
@@ -75,14 +76,16 @@ public class UserServiceGrpcImpl extends UserServiceGrpc.UserServiceImplBase {
 
         OrganizationResponse organizationResponse = organizationServiceBlockingStub.createOrganization(organizationRequest);
 
-        OrgMembersRequest organizationMembers = OrgMembersRequest.builder()
+        OrgMembersEvent organizationEvent = OrgMembersEvent.builder()
                 .orgId(organizationResponse.getId())
+                .orgName(userRequest.getOrganizationName())
                 .userId(savedUser.getId())
+                .userName(savedUser.getUsername())
                 .role(Role.OWNER)
                 .title("Owner")
                 .build();
 
-        kafkaTemplate.send("org-member-topic", organizationMembers);
+        kafkaTemplate.send("add-org-member-topic", organizationEvent);
 
         UserResponse userResponse = UserResponse.newBuilder()
                 .setId(savedUser.getId())
@@ -136,6 +139,7 @@ public class UserServiceGrpcImpl extends UserServiceGrpc.UserServiceImplBase {
         }
     }
 
+
     private String generateUsername(String fullname) {
         String baseUsername = "wse_" + fullname.trim()
                 .replaceAll("\\s+", "_")
@@ -158,5 +162,61 @@ public class UserServiceGrpcImpl extends UserServiceGrpc.UserServiceImplBase {
         return username;
     }
 
+    @Override
+    public void createUserByInvite(CreateUserByInviteRequest request, StreamObserver<CreateUserResponse> responseObserver) {
+        String username = generateUsername(request.getName());
+
+        if (userRepository.findByUsername(username).isPresent()) {
+            responseObserver.onError(
+                    Status.ALREADY_EXISTS
+                            .withDescription("Username already exists")
+                            .asRuntimeException()
+            );
+            return;
+        }
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            responseObserver.onError(
+                    Status.ALREADY_EXISTS
+                            .withDescription("Email already exists")
+                            .asRuntimeException()
+            );
+            return;
+        }
+
+        Users newUser = Users.builder()
+                .name(request.getName())
+                .username(username)
+                .password(passwordEncoder.encode(request.getPassword()))
+                .email(request.getEmail())
+                .userStatus(UserStatus.ACTIVE)
+                .role(Role.valueOf(request.getRole()))
+                .build();
+
+        newUser.setCreatedBy(systemUserId);
+        newUser.setUpdatedBy(systemUserId);
+
+        Users savedUser = userRepository.save(newUser);
+
+        OrgMembersEvent organizationEvent = OrgMembersEvent.builder()
+                .orgId(request.getOrgId())
+                .orgName(request.getOrgName())
+                .userId(savedUser.getId())
+                .userName(savedUser.getUsername())
+                .role(savedUser.getRole())
+                .title(request.getTitle())
+                .build();
+
+        kafkaTemplate.send("add-org-member-topic", organizationEvent);
+
+        CreateUserResponse createUserResponse = CreateUserResponse.newBuilder()
+                .setId(savedUser.getId())
+                .setUsername(savedUser.getUsername())
+                .setRole(savedUser.getRole().name())
+                .build();
+
+        responseObserver.onNext(createUserResponse);
+        responseObserver.onCompleted();
+
+    }
 }
 
