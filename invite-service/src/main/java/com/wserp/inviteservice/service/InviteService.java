@@ -119,4 +119,8 @@ public class InviteService {
                 "role", userResponse.getRole()
         );
     }
+
+    public List<Invite> getAllPendingInvites() {
+        return inviteRepository.findByStatus(InviteStatus.PENDING);
+    }
 }

@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +31,7 @@ public class AuthController {
     @PostMapping("/create-org")
     public ResponseEntity<?> register(@RequestBody @Valid OrganizationRegistrationRequest request) {
         log.info("Registering organization: {}", request);
-        return ResponseEntity.ok(authService.register(request));
+        return new ResponseEntity<>(authService.register(request), HttpStatus.CREATED);
     }
 
     @PostMapping("/refresh-token")

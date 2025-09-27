@@ -1,16 +1,16 @@
 package com.wserp.organizationservice.controller;
 
 
+import com.wserp.common.dto.OrgUpdateRequest;
 import com.wserp.common.dto.OrganizationDto;
-import com.wserp.common.dto.OrganizationRequest;
+import com.wserp.common.jwt.CurrentUserData;
 import com.wserp.organizationservice.service.OrganizationService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/orgs")
@@ -19,17 +19,32 @@ public class OrganizationController {
 
     private final OrganizationService organizationService;
     private final ModelMapper modelMapper;
-    @Value("${internal.token}")
-    private String internalToken;
+    private final CurrentUserData currentUserData;
 
-    @PostMapping("/save")
-    public ResponseEntity<OrganizationDto> saveOrganization(@RequestBody OrganizationRequest organization, @RequestHeader(value = "X-INTERNAL-TOKEN", required = false) String token) {
-        if (!internalToken.equals(token)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
-        }
-
-        return ResponseEntity.ok(modelMapper.map(organizationService.saveOrganization(organization), OrganizationDto.class));
+    @GetMapping("/{id}")
+    public ResponseEntity<OrganizationDto> getOrganizationById(@PathVariable String id) {
+        return ResponseEntity.ok(modelMapper.map(organizationService.getOrganizationById(id), OrganizationDto.class));
     }
 
+    @GetMapping("/my")
+    public ResponseEntity<OrganizationDto> getMyOrganization() {
+        return ResponseEntity.ok(modelMapper.map(organizationService.getOrganizationById(currentUserData.getCurrentUserId()), OrganizationDto.class));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<OrganizationDto>> getAllOrganizations() {
+        return ResponseEntity.ok(organizationService.getAllOrganizations().stream().map(org -> modelMapper.map(org, OrganizationDto.class)).toList());
+    }
+
+    @PutMapping("/my")
+    public ResponseEntity<OrganizationDto> updateMyOrganization(@RequestBody OrgUpdateRequest orgUpdateRequest) {
+        return ResponseEntity.ok(modelMapper.map(organizationService.updateMyOrganization(currentUserData.getCurrentUserId(), orgUpdateRequest), OrganizationDto.class));
+    }
+
+    @DeleteMapping("/my")
+    public ResponseEntity<String> deleteMyOrganization() {
+        organizationService.deleteMyOrganization(currentUserData.getCurrentUserId());
+        return ResponseEntity.ok("Organization deleted successfully");
+    }
 
 }

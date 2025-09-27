@@ -33,6 +33,8 @@ public class Users extends BaseEntity {
     private String location;
     private String bio;
     private String profileImage;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
 
 }

@@ -1,6 +1,5 @@
 package com.wserp.common.dto;
 
-import com.wserp.common.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,10 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrgMembersDto {
-    private long id;
-    private String orgId;
+public class OrgMemberDto {
+    private String organizationName;
+    private String organizationId;
     private String userId;
-    private Role role;
+    private String userName;
+    private String userRole;
     private String title;
 }

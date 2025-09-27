@@ -6,21 +6,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
+@NoArgsConstructor
+@Builder
+public class InviteDto {
     private String id;
-    private String userName;
     private String orgId;
+    private String orgName;
+    private String inviteBy;
+    private String userId;
     private String email;
-    private String name;
     private String role;
     private String title;
-    private String profileImage;
-    private String location;
-    private String bio;
     private String status;
-    private String createdAt;
-    private String updatedAt;
 }
+
+

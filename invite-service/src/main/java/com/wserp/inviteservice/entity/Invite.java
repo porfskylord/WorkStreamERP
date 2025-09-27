@@ -2,10 +2,7 @@ package com.wserp.inviteservice.entity;
 
 import com.wserp.common.enums.Role;
 import com.wserp.inviteservice.entity.enums.InviteStatus;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -43,12 +40,14 @@ public class Invite {
     private String inviteBy;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @Column(nullable = false)
     private String title;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private InviteStatus status;
 
     @Column(nullable = false)
